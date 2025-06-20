@@ -8,6 +8,74 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="stylesheet" href="static/css/feature-pages.css">
+    <style>
+        /* Premium Upload Button Styling */
+.browse-upload-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.85rem 1.8rem;
+    border-radius: 30px;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 
+        0 8px 20px rgba(139, 92, 246, 0.3),
+        0 4px 12px rgba(236, 72, 153, 0.2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+}
+
+.browse-upload-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 25px rgba(139, 92, 246, 0.4),
+        0 6px 15px rgba(236, 72, 153, 0.3);
+}
+
+.browse-upload-btn:active {
+    transform: translateY(-1px);
+}
+
+.upload-different-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.85rem 1.8rem;
+    border-radius: 30px;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 
+        0 8px 20px rgba(139, 92, 246, 0.3),
+        0 4px 12px rgba(236, 72, 153, 0.2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    margin-top: 1rem;
+}
+
+.upload-different-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 25px rgba(139, 92, 246, 0.4),
+        0 6px 15px rgba(236, 72, 153, 0.3);
+}
+
+.upload-different-btn:active {
+    transform: translateY(-1px);
+}
+
+.upload-different-btn .bolt {
+    display: inline-block;
+    transform: translateY(1px);
+    margin-left: 4px;
+}
+    </style>
 </head>
 <body>
     <!-- Feature Page Navbar -->
@@ -64,7 +132,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3>Drop your files here</h3>
-                    <p>or <span class="upload-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+                    <p>or <button class="browse-upload-btn" onclick="document.getElementById('fileInput').click()">BROWSE TO UPLOAD</button></p>
                     <div class="supported-formats">
                         <span class="format-tag">PDF</span>
                         <span class="format-tag">DOCX</span>
@@ -155,20 +223,26 @@ function handleFileSelect(e) {
 }
 
 function processFile(file) {
+    const uploadZone = document.getElementById('uploadZone');
     const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'text/markdown'];
-    
-    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|docx|txt|md)$/i)) {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    // More flexible file type checking
+    if (!allowedTypes.includes(file.type) && !['pdf', 'docx', 'txt', 'md'].includes(fileExtension)) {
         showError('Please upload a PDF, DOCX, TXT, or MD file.');
         return;
     }
-    
-    if (file.size > 16 * 1024 * 1024) { // 16MB
+
+    if (file.size > 16 * 1024 * 1024) { // 16MB limit
         showError('File size must be less than 16MB.');
         return;
     }
-    
-    // Show file info
-    const uploadZone = document.getElementById('uploadZone');
+
+    // Store uploaded file
+    uploadedContent = file;
+    document.getElementById('textContent').value = ''; // Clear text area
+
+    // Update the upload zone UI to show success state
     uploadZone.innerHTML = `
         <div class="upload-content">
             <div class="upload-success">
@@ -176,12 +250,12 @@ function processFile(file) {
             </div>
             <h3>File uploaded successfully!</h3>
             <p><strong>${file.name}</strong> (${formatFileSize(file.size)})</p>
-            <button class="upload-link" onclick="resetUpload()">Upload different file</button>
+            <button class="upload-different-btn" onclick="resetUpload()">UPLOAD DIFFERENT FILE<span class="bolt">⚡</span></button>
         </div>
     `;
-    
-    uploadedContent = file;
-    updateGenerateButton();
+
+    // Log to verify upload was processed
+    console.log("File processed successfully:", file.name);
 }
 
 function resetUpload() {
@@ -192,7 +266,7 @@ function resetUpload() {
                 <i class="fas fa-cloud-upload-alt"></i>
             </div>
             <h3>Drop your files here</h3>
-            <p>or <span class="upload-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+            <p>or <button class="browse-upload-btn" onclick="document.getElementById('fileInput').click()">BROWSE TO UPLOAD</button></p>
             <div class="supported-formats">
                 <span class="format-tag">PDF</span>
                 <span class="format-tag">DOCX</span>
@@ -201,11 +275,9 @@ function resetUpload() {
             </div>
         </div>
     `;
-    
+
     document.getElementById('fileInput').value = '';
-    document.getElementById('textContent').value = '';
-    uploadedContent = '';
-    updateGenerateButton();
+    uploadedContent = null;
 }
 
 function updateGenerateButton() {
