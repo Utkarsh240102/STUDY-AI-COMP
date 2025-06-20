@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map Generator - StudyAI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/feature-pages.css">
+</head>
+<body>
+    <!-- Feature Page Navbar -->
+    <header class="feature-header">
+        <nav class="feature-nav">
+            <a href="/" class="nav-home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            
+            <div class="feature-tabs">
+                <a href="flashcards.html" class="feature-tab">
+                    <i class="fas fa-brain"></i> Flashcards
+                </a>
+                <a href="mindmap.html" class="feature-tab active">
+                    <i class="fas fa-project-diagram"></i> Mind Map
+                </a>
+                <a href="learning-path.html" class="feature-tab">
+                    <i class="fas fa-route"></i> Learning Path
+                </a>
+                <a href="sticky-notes.html" class="feature-tab">
+                    <i class="fas fa-sticky-note"></i> Sticky Notes
+                </a>
+                <a href="exam-booster.html" class="feature-tab">
+                    <i class="fas fa-trophy"></i> Exam Booster
+                </a>
+                <a href="youtube-summarizer.html" class="feature-tab">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+                <a href="pdf-qa.html" class="feature-tab">
+                    <i class="fas fa-file-pdf"></i> PDF Q&A
+                </a>
+            </div>
+            
+            <div class="nav-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="settings-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="feature-main">
+        <div class="feature-container">
+            <div class="feature-title-section">
+                <h1><i class="fas fa-project-diagram"></i> Mind Map Generator</h1>
+                <p>Upload your study materials and generate interactive mind maps to visualize connections</p>
+            </div>
+
+            <!-- Drag and Drop Upload Area -->
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop your files here</h3>
+                    <p>or <span class="upload-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+                    <div class="supported-formats">
+                        <span class="format-tag">PDF</span>
+                        <span class="format-tag">DOCX</span>
+                        <span class="format-tag">TXT</span>
+                        <span class="format-tag">MD</span>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
+            </div>
+
+            <!-- Text Input Alternative -->
+            <div class="text-input-section">
+                <h3><i class="fas fa-keyboard"></i> Or paste your text content</h3>
+                <textarea id="textContent" placeholder="Paste your study material here..." rows="8"></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="generate-section">
+                <button class="generate-btn" onclick="generateMindMap()">
+                    <i class="fas fa-magic"></i>
+                    Generate Mind Map
+                </button>
+            </div>
+
+            <!-- Results Area -->
+            <div class="results-area" id="resultsArea" style="display: none;">
+                <!-- Results will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="static/js/script.js"></script>
+    <script src="static/js/feature-pages.js"></script>
+    <script>
+// Global variables for mind map
+let uploadedContent = '';
+let isGenerating = false;
+
+// Initialize drag and drop functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const textContent = document.getElementById('textContent');
+
+    // File input change handler
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    // Drag and drop handlers
+    uploadZone.addEventListener('dragover', handleDragOver);
+    uploadZone.addEventListener('dragleave', handleDragLeave);
+    uploadZone.addEventListener('drop', handleFileDrop);
+    
+    // Text content change handler
+    textContent.addEventListener('input', function() {
+        uploadedContent = this.value;
+        updateGenerateButton();
+    });
+});
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadZone').classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadZone').classList.remove('drag-over');
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadZone').classList.remove('drag-over');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        processFile(files[0]);
+    }
+}
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+        processFile(file);
+    }
+}
+
+function processFile(file) {
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'text/markdown'];
+    
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|docx|txt|md)$/i)) {
+        showError('Please upload a PDF, DOCX, TXT, or MD file.');
+        return;
+    }
+    
+    if (file.size > 16 * 1024 * 1024) { // 16MB
+        showError('File size must be less than 16MB.');
+        return;
+    }
+    
+    // Show file info
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.innerHTML = `
+        <div class="upload-content">
+            <div class="upload-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>File uploaded successfully!</h3>
+            <p><strong>${file.name}</strong> (${formatFileSize(file.size)})</p>
+            <button class="upload-link" onclick="resetUpload()">Upload different file</button>
+        </div>
+    `;
+    
+    uploadedContent = file;
+    updateGenerateButton();
+}
+
+function resetUpload() {
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.innerHTML = `
+        <div class="upload-content">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3>Drop your files here</h3>
+            <p>or <span class="upload-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+            <div class="supported-formats">
+                <span class="format-tag">PDF</span>
+                <span class="format-tag">DOCX</span>
+                <span class="format-tag">TXT</span>
+                <span class="format-tag">MD</span>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('fileInput').value = '';
+    document.getElementById('textContent').value = '';
+    uploadedContent = '';
+    updateGenerateButton();
+}
+
+function updateGenerateButton() {
+    const generateBtn = document.querySelector('.generate-btn');
+    const hasContent = uploadedContent !== '' && uploadedContent !== null;
+    
+    generateBtn.disabled = !hasContent || isGenerating;
+    generateBtn.classList.toggle('disabled', !hasContent || isGenerating);
+}
+
+async function generateMindMap() {
+    if (isGenerating || !uploadedContent) return;
+    
+    isGenerating = true;
+    updateGenerateButton();
+    
+    const generateBtn = document.querySelector('.generate-btn');
+    const originalText = generateBtn.innerHTML;
+    
+    // Show loading state
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Mind Map...';
+    
+    try {
+        const formData = new FormData();
+        
+        if (typeof uploadedContent === 'string') {
+            // Text content
+            formData.append('text', uploadedContent);
+        } else {
+            // File content
+            formData.append('file', uploadedContent);
+        }
+        
+        // Call FastAPI endpoint
+        const response = await fetch('/api/generate-mindmap', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            displayMindMapResults(result);
+        } else {
+            showError(result.detail || 'Failed to generate mind map');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Network error occurred. Please try again.');
+    } finally {
+        isGenerating = false;
+        generateBtn.innerHTML = originalText;
+        updateGenerateButton();
+    }
+}
+
+function displayMindMapResults(mindmapData) {
+    // Store for download functionality
+    window.currentMindMapData = mindmapData;
+    
+    const resultsArea = document.getElementById('resultsArea');
+    
+    const resultsHTML = `
+        <div class="results-header">
+            <h2><i class="fas fa-project-diagram"></i> Generated Mind Map</h2>
+            <div class="results-actions">
+                <button class="action-btn download-btn" onclick="downloadMindMap()">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="action-btn share-btn" onclick="shareMindMap()">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="action-btn regenerate-btn" onclick="generateMindMap()">
+                    <i class="fas fa-redo"></i> Regenerate
+                </button>
+            </div>
+        </div>
+        
+        <div class="mindmap-container">
+            <div class="mindmap-canvas" id="mindmapCanvas">
+                ${renderMindMap(mindmapData)}
+            </div>
+        </div>
+        
+        <div class="mindmap-info">
+            <div class="info-card">
+                <i class="fas fa-lightbulb"></i>
+                <h4>Mind Map Analysis</h4>
+                <p><strong>Central Topic:</strong> ${mindmapData.title}</p>
+                <p><strong>Main Branches:</strong> ${mindmapData.nodes.length} topics</p>
+                <p><strong>Total Nodes:</strong> ${countTotalNodes(mindmapData.nodes)} concepts</p>
+                <p><strong>Complexity Level:</strong> ${mindmapData.nodes.length > 4 ? 'Advanced' : 'Intermediate'}</p>
+            </div>
+        </div>
+    `;
+    
+    resultsArea.innerHTML = resultsHTML;
+    resultsArea.style.display = 'block';
+    
+    // Smooth scroll to results
+    setTimeout(() => {
+        resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+}
+
+function renderMindMap(mindmapData) {
+    const containerWidth = 900;
+    const containerHeight = 700;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
+
+    const colors = ['#4ECDC4', '#FF6B6B', '#F9D423', '#45B7D1', '#F87171', '#A78BFA'];
+
+    // Define specific positions to match the desired hierarchical layout
+    const mainPositions = [
+        { x: centerX, y: centerY - 220 },      // Top
+        { x: centerX + 320, y: centerY },      // Right
+        { x: centerX, y: centerY + 220 },      // Bottom
+        { x: centerX - 320, y: centerY },      // Left
+        { x: centerX + 220, y: centerY - 150 }, // Top-Right
+        { x: centerX - 220, y: centerY - 150 }  // Top-Left
+    ];
+
+    const centralNode = `<div class="mind-map-center" style="top: ${centerY}px; left: ${centerX}px;">${mindmapData.title}</div>`;
+
+    let nodesHTML = '';
+    let linesHTML = '';
+
+    mindmapData.nodes.slice(0, 6).forEach((node, index) => {
+        const pos = mainPositions[index];
+        const nodeColor = colors[index % colors.length];
+
+        // Main node - Use CSS variable for color
+        nodesHTML += `<div class="mind-map-node" style="--node-color: ${nodeColor}; top: ${pos.y}px; left: ${pos.x}px;">${node.label}</div>`;
+        
+        // Line from center to main node
+        linesHTML += `<line x1="${centerX}" y1="${centerY}" x2="${pos.x}" y2="${pos.y}" class="mind-map-connector" />`;
+
+        // Children nodes
+        if (node.children && node.children.length > 0) {
+            const totalChildren = node.children.length;
+            
+            // Top or Bottom nodes -> lay out children horizontally
+            if (Math.abs(pos.x - centerX) < 100) {
+                const childY = pos.y + ((pos.y < centerY) ? 70 : 70); // Place below top nodes, or below bottom nodes
+                const totalWidth = totalChildren * 140; // 130px width + 10px gap
+                const startX = pos.x - (totalWidth / 2) + (140 / 2);
+
+                node.children.forEach((child, childIndex) => {
+                    const childX = startX + childIndex * 140;
+                    const childColor = colors[(index + 5) % colors.length]; // Use a different color
+                    nodesHTML += `<div class="mind-map-child" style="--node-color: ${childColor}; top: ${childY}px; left: ${childX}px;">${child.label}</div>`;
+                    linesHTML += `<line x1="${pos.x}" y1="${pos.y}" x2="${childX}" y2="${childY}" class="child-connector" />`;
+                });
+            } 
+            // Side nodes (Left or Right) -> lay out children vertically
+            else {
+                const childX = pos.x + ((pos.x < centerX) ? -150 : 150);
+                const totalHeight = totalChildren * 60; // 50px height + 10px gap
+                const startY = pos.y - (totalHeight / 2) + (60 / 2);
+
+                node.children.forEach((child, childIndex) => {
+                    const childY = startY + childIndex * 60;
+                    const childColor = colors[(index + 5) % colors.length];
+                    nodesHTML += `<div class="mind-map-child" style="--node-color: ${childColor}; top: ${childY}px; left: ${childX}px;">${child.label}</div>`;
+                    linesHTML += `<line x1="${pos.x}" y1="${pos.y}" x2="${childX}" y2="${childY}" class="child-connector" />`;
+                });
+            }
+        }
+    });
+
+    return `
+        <div class="mind-map-wrapper" style="width: ${containerWidth}px; height: ${containerHeight}px;">
+            <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index: 1;">
+                ${linesHTML}
+            </svg>
+            ${centralNode}
+            ${nodesHTML}
+        </div>
+    `;
+}
+
+function countTotalNodes(nodes) {
+    let count = nodes.length;
+    nodes.forEach(node => {
+        if (node.children) {
+            count += countTotalNodes(node.children);
+        }
+    });
+    return count;
+}
+
+function downloadMindMap() {
+    // Implementation for downloading mind map
+    const mindmapData = JSON.stringify(window.currentMindMapData || {}, null, 2);
+    const blob = new Blob([mindmapData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mindmap-data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function shareMindMap() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'StudyAI Mind Map',
+            text: 'Check out this mind map I generated with StudyAI!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showSuccess('Link copied to clipboard!');
+        });
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = `
+        <i class="fas fa-exclamation-triangle"></i>
+        ${message}
+    `;
+    document.body.appendChild(errorDiv);
+    
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+}
+
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        ${message}
+    `;
+    document.body.appendChild(successDiv);
+    
+    setTimeout(() => {
+        successDiv.remove();
+    }, 3000);
+}
+
+// Add this function for testing
+function testMindMap() {
+    const testData = {
+        "title": "Study Topics",
+        "nodes": [
+            {
+                "label": "Mathematics",
+                "children": [
+                    {"label": "Algebra"},
+                    {"label": "Geometry"}
+                ]
+            },
+            {
+                "label": "Science", 
+                "children": [
+                    {"label": "Physics"},
+                    {"label": "Chemistry"}
+                ]
+            },
+            {
+                "label": "History",
+                "children": [
+                    {"label": "Ancient"},
+                    {"label": "Modern"}
+                ]
+            },
+            {
+                "label": "Literature",
+                "children": [
+                    {"label": "Poetry"}
+                ]
+            }
+        ]
+    };
+    
+    displayMindMapResults(testData);
+}
+
+// Add a test button (remove after testing)
+// <button onclick="testMindMap()">Test Mind Map</button>
+</script>
+</body>
+</html>

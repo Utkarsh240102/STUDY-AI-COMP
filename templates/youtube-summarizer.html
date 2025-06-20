@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Summarizer - StudyAI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/feature-pages.css">
+</head>
+<body>
+    <!-- Feature Page Navbar -->
+    <header class="feature-header">
+        <nav class="feature-nav">
+            <a href="/" class="nav-home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            
+            <div class="feature-tabs">
+                <a href="flashcards.html" class="feature-tab">
+                    <i class="fas fa-brain"></i> Flashcards
+                </a>
+                <a href="mindmap.html" class="feature-tab">
+                    <i class="fas fa-project-diagram"></i> Mind Map
+                </a>
+                <a href="learning-path.html" class="feature-tab">
+                    <i class="fas fa-route"></i> Learning Path
+                </a>
+                <a href="sticky-notes.html" class="feature-tab">
+                    <i class="fas fa-sticky-note"></i> Sticky Notes
+                </a>
+                <a href="exam-booster.html" class="feature-tab">
+                    <i class="fas fa-trophy"></i> Exam Booster
+                </a>
+                <a href="youtube-summarizer.html" class="feature-tab active">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+                <a href="pdf-qa.html" class="feature-tab">
+                    <i class="fas fa-file-pdf"></i> PDF Q&A
+                </a>
+              
+            </div>
+            
+            <div class="nav-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="settings-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="feature-main">
+        <div class="feature-container">
+            <div class="feature-title-section">
+                <h1><i class="fab fa-youtube"></i> YouTube Video Summarizer</h1>
+                <p>Paste a YouTube URL to generate AI-powered summaries and study materials from video content</p>
+            </div>
+
+            <!-- YouTube URL Input -->
+            <div class="text-input-section">
+                <h3><i class="fab fa-youtube"></i> Enter YouTube Video URL</h3>
+                <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." style="width: 100%; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; color: var(--text-primary); font-family: inherit; font-size: 1rem; transition: var(--transition);">
+                
+                <div id="videoPreview" class="video-preview" style="display: none; margin-top: 2rem; padding: 2rem; background: rgba(255, 255, 255, 0.05); border-radius: 15px; text-align: center;">
+                    <!-- Video preview will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="generate-section">
+                <button class="generate-btn" onclick="generateYouTubeSummary()">
+                    <i class="fas fa-magic"></i>
+                    Summarize Video
+                </button>
+            </div>
+
+            <!-- Results Area -->
+            <div class="results-area" id="resultsArea" style="display: none;">
+                <!-- Results will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="static/js/script.js"></script>
+    <script src="static/js/feature-pages.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Q&A Generator - StudyAI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/feature-pages.css">
+</head>
+<body>
+    <!-- Feature Page Navbar -->
+    <header class="feature-header">
+        <nav class="feature-nav">
+            <a href="/" class="nav-home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            
+            <div class="feature-tabs">
+                <a href="flashcards.html" class="feature-tab">
+                    <i class="fas fa-brain"></i> Flashcards
+                </a>
+                <a href="mindmap.html" class="feature-tab">
+                    <i class="fas fa-project-diagram"></i> Mind Map
+                </a>
+                <a href="learning-path.html" class="feature-tab">
+                    <i class="fas fa-route"></i> Learning Path
+                </a>
+                <a href="sticky-notes.html" class="feature-tab">
+                    <i class="fas fa-sticky-note"></i> Sticky Notes
+                </a>
+                <a href="exam-booster.html" class="feature-tab">
+                    <i class="fas fa-trophy"></i> Exam Booster
+                </a>
+                <a href="youtube-summarizer.html" class="feature-tab">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+                <a href="pdf-qa.html" class="feature-tab active">
+                    <i class="fas fa-file-pdf"></i> PDF Q&A
+                </a>
+           
+            </div>
+            
+            <div class="nav-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="settings-btn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="feature-main">
+        <div class="feature-container">
+            <div class="feature-title-section">
+                <h1><i class="fas fa-file-pdf"></i> PDF Q&A Generator</h1>
+                <p>Upload your PDF documents and ask questions or generate comprehensive Q&A pairs</p>
+            </div>
+
+            <!-- Drag and Drop Upload Area -->
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop your PDF files here</h3>
+                    <p>or <span class="upload-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+                    <div class="supported-formats">
+                        <span class="format-tag">PDF</span>
+                        <span class="format-tag">DOCX</span>
+                        <span class="format-tag">TXT</span>
+                        <span class="format-tag">MD</span>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
+            </div>
+
+            <!-- Question Input Alternative -->
+            <div class="text-input-section">
+                <h3><i class="fas fa-question-circle"></i> Ask a question about your documents</h3>
+                <textarea id="textContent" placeholder="Enter your question here or leave blank to generate Q&A pairs automatically..." rows="4"></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="generate-section">
+                <button class="generate-btn" onclick="generatePDFQA()">
+                    <i class="fas fa-magic"></i>
+                    Generate Q&A
+                </button>
+            </div>
+
+            <!-- Results Area -->
+            <div class="results-area" id="resultsArea" style="display: none;">
+                <!-- Results will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="static/js/script.js"></script>
+    <script src="static/js/feature-pages.js"></script>
+</body>
+</html>
