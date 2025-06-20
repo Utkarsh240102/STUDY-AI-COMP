@@ -33,21 +33,47 @@
     }
     
     .filter-btn {
-        padding: 0.6rem 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
+        padding: 0.7rem 1.2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
         color: var(--text-primary);
         font-size: 0.9rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .filter-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .filter-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-btn:hover::before {
+        opacity: 1;
     }
     
     .filter-btn.active {
-        background: var(--primary);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         color: white;
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
     }
     
     body.day-mode .filter-btn {
@@ -61,11 +87,27 @@
     }
     
     .section-title {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding: 0.8rem 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        display: inline-block;
         color: var(--text-primary);
+        position: relative;
+        border-left: 3px solid var(--primary);
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 30%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary) 0%, transparent 100%);
+        border-radius: 3px;
     }
     
     .question-list {
@@ -74,145 +116,338 @@
         gap: 1.5rem;
     }
     
+    /* God-Tier Exam Questions Styling */
     .question-card {
-        background: var(--bg-secondary);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.8rem;
+        transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        transform-style: preserve-3d;
+        box-shadow: 
+            0 10px 30px -15px rgba(0, 0, 0, 0.3),
+            0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .question-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(circle at top right, 
+                    rgba(255, 255, 255, 0.1) 0%, 
+                    transparent 70%);
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    .question-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            transparent, 
+            transparent, 
+            rgba(255, 255, 255, 0.02), 
+            rgba(255, 255, 255, 0.08)
+        );
+        transform: rotate(30deg);
+        transition: all 0.8s;
+        opacity: 0;
+        pointer-events: none;
     }
     
     .question-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transform: translateY(-10px) translateZ(10px);
+        box-shadow: 
+            0 25px 45px -12px rgba(0, 0, 0, 0.35),
+            0 8px 20px rgba(0, 0, 0, 0.15);
     }
     
+    .question-card:hover::after {
+        opacity: 1;
+        top: -100%;
+        left: -100%;
+    }
+    
+    /* Question type-specific styling */
+    .question-card.long_answer-question {
+        background: linear-gradient(135deg, rgba(93, 83, 242, 0.03) 0%, rgba(93, 83, 242, 0.08) 100%);
+        border-left: 4px solid #5d53f2;
+    }
+    
+    .question-card.short_answer-question {
+        background: linear-gradient(135deg, rgba(39, 171, 96, 0.03) 0%, rgba(39, 171, 96, 0.08) 100%);
+        border-left: 4px solid #27ab60;
+    }
+    
+    .question-card.hots-question {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.03) 0%, rgba(239, 68, 68, 0.08) 100%);
+        border-left: 4px solid #ef4444;
+    }
+    
+    /* Question content styling */
     .question-content {
-        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 2rem;
+        padding-right: 1.5rem;
     }
     
     .question-text {
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        line-height: 1.7;
+        font-weight: 500;
         color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        position: relative;
     }
     
+    .question-text::before {
+        content: '"';
+        position: absolute;
+        left: -1.5rem;
+        top: -0.5rem;
+        font-size: 3rem;
+        opacity: 0.2;
+        font-family: Georgia, serif;
+    }
+    
+    .question-text::after {
+        content: '"';
+        position: absolute;
+        margin-left: 0.25rem;
+        font-size: 3rem;
+        opacity: 0.2;
+        font-family: Georgia, serif;
+    }
+    
+    /* Premium Keyword Tags */
     .keyword-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        gap: 0.6rem;
+        margin-top: 1.25rem;
     }
     
     .keyword-tag {
-        padding: 0.35rem 0.75rem;
-        background: rgba(255, 255, 255, 0.1);
+        padding: 0.4rem 0.9rem;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
         color: var(--text-secondary);
-        border-radius: 20px;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transform: translateZ(5px);
     }
     
+    .keyword-tag:hover {
+        transform: translateY(-2px) translateZ(10px) scale(1.05);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .long_answer-question .keyword-tag {
+        background: rgba(93, 83, 242, 0.08);
+        border-color: rgba(93, 83, 242, 0.2);
+    }
+    
+    .short_answer-question .keyword-tag {
+        background: rgba(39, 171, 96, 0.08);
+        border-color: rgba(39, 171, 96, 0.2);
+    }
+    
+    .hots-question .keyword-tag {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+    
+    /* Enhanced Question Metadata */
     .question-meta {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+        padding-top: 1.25rem;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
     }
     
+    /* Premium Question Type Badge */
     .question-type {
-        padding: 0.3rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
+        padding: 0.45rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.08em;
+        transform: translateZ(10px);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .question-type::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        opacity: 0.5;
     }
     
     .question-type.long_answer {
         background: rgba(93, 83, 242, 0.2);
         color: #5d53f2;
+        border: 1px solid rgba(93, 83, 242, 0.3);
     }
     
     .question-type.short_answer {
         background: rgba(39, 171, 96, 0.2);
         color: #27ab60;
+        border: 1px solid rgba(39, 171, 96, 0.3);
     }
     
     .question-type.hots {
         background: rgba(239, 68, 68, 0.2);
         color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
     }
     
+    .question-type::after {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+    }
+    
+    .question-type.long_answer::after {
+        content: '\f249'; /* fa-sticky-note */
+    }
+    
+    .question-type.short_answer::after {
+        content: '\f15c'; /* fa-file */
+    }
+    
+    .question-type.hots::after {
+        content: '\f121'; /* fa-code */
+    }
+    
+    /* Enhanced Probability Container */
     .probability-container {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        min-width: 200px;
+        gap: 0.6rem;
+        min-width: 240px;
+        transform: translateZ(5px);
     }
     
     .probability-label {
-        font-size: 0.8rem;
-        font-weight: 600;
+        font-size: 0.85rem;
+        font-weight: 700;
         text-align: right;
-    }
-    
-    .probability-label.high {
-        color: #ef4444;
-    }
-    
-    .probability-label.medium {
-        color: #f59e0b;
-    }
-    
-    .probability-label.low {
-        color: #3b82f6;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
     
     .probability-bar {
-        height: 8px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
         overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        position: relative;
     }
     
     .probability-fill {
         height: 100%;
-        border-radius: 4px;
-        transition: width 1s ease-in-out;
+        border-radius: 10px;
+        position: relative;
+        transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.8;
+        }
+    }
+    
+    .probability-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 255, 255, 0.3) 50%, 
+            rgba(255, 255, 255, 0) 100%);
+        animation: shine 2s infinite;
+    }
+    
+    @keyframes shine {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
     }
     
     .probability-fill.high {
-        background: linear-gradient(to right, #ef4444, #f87171);
+        background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
     }
     
     .probability-fill.medium {
-        background: linear-gradient(to right, #f59e0b, #fbbf24);
+        background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
     }
     
     .probability-fill.low {
-        background: linear-gradient(to right, #3b82f6, #60a5fa);
+        background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
     }
     
     .probability-percentage {
-        font-size: 0.8rem;
-        font-weight: 700;
+        font-size: 0.9rem;
+        font-weight: 800;
         text-align: right;
     }
     
     .probability-percentage.high {
         color: #ef4444;
+        text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
     }
     
     .probability-percentage.medium {
         color: #f59e0b;
+        text-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
     }
     
     .probability-percentage.low {
         color: #3b82f6;
+        text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
     }
     
     .export-section {
@@ -719,13 +954,11 @@
                     ${questionsHTML}
                 </div>
                 
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportQuestions('pdf')">
-                        <i class="fas fa-file-pdf"></i> Export to PDF
+                <div class="download-section">
+                    <button class="download-btn download-btn-pdf" onclick="downloadQuestions('pdf')">
+                        <i class="fas fa-file-pdf"></i> Download PDF
                     </button>
-                    <button class="export-btn" onclick="exportQuestions('docx')">
-                        <i class="fas fa-file-word"></i> Export to DOCX
-                    </button>
+                   
                 </div>
             </div>
         `;
@@ -853,6 +1086,254 @@
             showSuccess(`Questions exported to ${format.toUpperCase()} successfully!`);
         }, 1500);
     }
+
+    function downloadQuestions(format) {
+        showSuccess(`Preparing your ${format.toUpperCase()} download...`);
+        
+        // Get all visible questions
+        const questions = currentExamQuestions.filter(q => {
+            const card = document.querySelector(`.question-card[data-type="${q.type}"]`);
+            return card && window.getComputedStyle(card).display !== 'none';
+        });
+        
+        if (format === 'pdf') {
+            downloadAsPDF(questions);
+        } else if (format === 'docx') {
+            downloadAsDOCX(questions);
+        }
+    }
+
+    function downloadAsPDF(questions) {
+        // Load jsPDF library dynamically
+        if (!window.jspdf) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = function() {
+                const fontScript = document.createElement('script');
+                fontScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js';
+                fontScript.onload = function() {
+                    generatePDF(questions);
+                };
+                document.head.appendChild(fontScript);
+            };
+            document.head.appendChild(script);
+        } else {
+            generatePDF(questions);
+        }
+    }
+
+    function generatePDF(questions) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Add title
+        doc.setFontSize(20);
+        doc.setTextColor(93, 83, 242);
+        doc.text('StudyAI: Exam Booster Questions', 20, 20);
+        
+        // Add date
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 30);
+        
+        let yPosition = 40;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        
+        // Group questions by type
+        const questionTypes = {
+            'long_answer': 'LONG ANSWER QUESTIONS',
+            'short_answer': 'SHORT ANSWER QUESTIONS',
+            'hots': 'HIGHER ORDER THINKING SKILLS QUESTIONS'
+        };
+        
+        // Process each question type
+        Object.entries(questionTypes).forEach(([type, title]) => {
+            const typeQuestions = questions.filter(q => q.type === type);
+            
+            if (typeQuestions.length > 0) {
+                // Check if we need a new page
+                if (yPosition > 260) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                // Add section title
+                doc.setFillColor(93, 83, 242, 0.1);
+                doc.rect(20, yPosition, pageWidth - 40, 10, 'F');
+                doc.setTextColor(93, 83, 242);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.text(title, 22, yPosition + 7);
+                yPosition += 15;
+                
+                // Process each question
+                typeQuestions.forEach((question, index) => {
+                    // Check if we need a new page
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Question number and text
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(11);
+                    doc.text(`Q${index + 1}:`, 20, yPosition);
+                    
+                    doc.setFont(undefined, 'normal');
+                    
+                    // Handle wrapped text
+                    const textLines = doc.splitTextToSize(question.question, pageWidth - 55);
+                    doc.text(textLines, 30, yPosition);
+                    
+                    // Move position based on number of lines
+                    yPosition += 7 * textLines.length;
+                    
+                    // Add probability
+                    const probabilityText = `Probability: ${Math.round(question.probability_score * 100)}%`;
+                    doc.setTextColor(100, 100, 100);
+                    doc.setFontSize(9);
+                    doc.text(probabilityText, pageWidth - doc.getTextWidth(probabilityText) - 20, yPosition);
+                    
+                    // Add keywords
+                    if (question.keywords && question.keywords.length > 0) {
+                        yPosition += 7;
+                        doc.setTextColor(80, 80, 80);
+                        doc.setFontSize(8);
+                        const keywordsText = `Keywords: ${question.keywords.join(', ')}`;
+                        const keywordLines = doc.splitTextToSize(keywordsText, pageWidth - 55);
+                        doc.text(keywordLines, 30, yPosition);
+                        yPosition += 5 * keywordLines.length;
+                    }
+                    
+                    yPosition += 10; // Space between questions
+                });
+                
+                yPosition += 10; // Space between sections
+            }
+        });
+        
+        // Save the PDF
+        doc.save('StudyAI_Exam_Questions.pdf');
+        showSuccess('PDF downloaded successfully!');
+    }
+
+    function downloadAsDOCX(questions) {
+        // Use docx.js for DOCX generation
+        if (!window.docx) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/docx@7.8.2/build/index.js';
+            script.onload = function() {
+                generateDOCX(questions);
+            };
+            document.head.appendChild(script);
+        } else {
+            generateDOCX(questions);
+        }
+    }
+
+    function generateDOCX(questions) {
+        const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = window.docx;
+        
+        // Create document
+        const doc = new Document({
+            sections: [{
+                properties: {},
+                children: [
+                    new Paragraph({
+                        text: "StudyAI: Exam Booster Questions",
+                        heading: HeadingLevel.HEADING_1,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `Generated on: ${new Date().toLocaleDateString()}`,
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { after: 400 }
+                    })
+                ]
+            }]
+        });
+        
+        // Group questions by type
+        const questionTypes = {
+            'long_answer': 'LONG ANSWER QUESTIONS',
+            'short_answer': 'SHORT ANSWER QUESTIONS',
+            'hots': 'HIGHER ORDER THINKING SKILLS QUESTIONS'
+        };
+        
+        // Add each question type section
+        Object.entries(questionTypes).forEach(([type, title]) => {
+            const typeQuestions = questions.filter(q => q.type === type);
+            
+            if (typeQuestions.length > 0) {
+                // Add section title
+                doc.addSection({
+                    properties: {},
+                    children: [
+                        new Paragraph({
+                            text: title,
+                            heading: HeadingLevel.HEADING_2,
+                            spacing: { before: 400, after: 200 }
+                        })
+                    ]
+                });
+                
+                // Add each question
+                typeQuestions.forEach((question, index) => {
+                    // Question text
+                    doc.addParagraph(
+                        new Paragraph({
+                            text: `Q${index + 1}: ${question.question}`,
+                            spacing: { before: 200, after: 100 }
+                        })
+                    );
+                    
+                    // Probability
+                    doc.addParagraph(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `Probability: ${Math.round(question.probability_score * 100)}%`,
+                                    size: 20,
+                                    color: "666666"
+                            })
+                        ],
+                        alignment: AlignmentType.RIGHT
+                    })
+                );
+                
+                // Keywords
+                if (question.keywords && question.keywords.length > 0) {
+                    doc.addParagraph(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `Keywords: ${question.keywords.join(', ')}`,
+                                    size: 20,
+                                    color: "666666",
+                                    italics: true
+                                })
+                            ],
+                            spacing: { after: 200 }
+                        })
+                    );
+                }
+            });
+        }
+    });
+    
+    // Generate and download the document
+    window.docx.Packer.toBlob(doc).then(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'StudyAI_Exam_Questions.docx';
+        link.click();
+        URL.revokeObjectURL(url);
+        showSuccess('DOCX downloaded successfully!');
+    });
+}
 
     function formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
