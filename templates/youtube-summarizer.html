@@ -8,6 +8,328 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="stylesheet" href="static/css/feature-pages.css">
+    <style>
+    /* YouTube Summarizer Specific Styles */
+    .video-preview {
+        background: linear-gradient(135deg, rgba(255, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+    }
+    
+    .video-preview-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    
+    .video-thumbnail {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        flex: 0 0 280px;
+        max-width: 100%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .video-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    
+    .video-thumbnail:hover img {
+        transform: scale(1.05);
+    }
+    
+    .video-duration {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .video-info {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .video-title {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+    
+    .video-channel, .video-views {
+        font-size: 0.95rem;
+        margin: 5px 0;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Summary Result Styling */
+    .summary-container {
+        background: var(--bg-secondary);
+        border-radius: 18px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin: 2rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .summary-header {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(255, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .summary-video-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-thumbnail {
+        position: relative;
+        width: 280px;
+        max-width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .summary-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .summary-play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 0, 0, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+    }
+    
+    .summary-play-btn:hover {
+        background: rgb(255, 0, 0);
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow: 0 8px 20px rgba(255, 0, 0, 0.4);
+    }
+    
+    .summary-video-details {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .summary-title {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        line-height: 1.4;
+    }
+    
+    .summary-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .source-badge, .duration-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .source-badge.transcript {
+        background: rgba(16, 185, 129, 0.2);
+        color: rgb(16, 185, 129);
+    }
+    
+    .source-badge.audio {
+        background: rgba(79, 70, 229, 0.2);
+        color: rgb(79, 70, 229);
+    }
+    
+    .duration-badge {
+        background: rgba(245, 158, 11, 0.2);
+        color: rgb(245, 158, 11);
+    }
+    
+    .summary-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .action-btn {
+        padding: 0.75rem 1.25rem;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .copy-btn:hover {
+        background: rgba(139, 92, 246, 0.2);
+        color: rgb(139, 92, 246);
+    }
+    
+    .flashcards-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: rgb(239, 68, 68);
+    }
+    
+    .notes-btn:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: rgb(245, 158, 11);
+    }
+    
+    .summary-content {
+        padding: 2rem;
+    }
+    
+    .summary-content h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .summary-text {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    
+    .summary-text p {
+        margin-bottom: 1rem;
+    }
+    
+    /* Loading state styling */
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        text-align: center;
+    }
+    
+    .loading-spinner {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+    }
+    
+    .loading-spinner i {
+        animation-duration: 2s;
+    }
+    
+    /* Video preview placeholder */
+    .video-preview-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+    }
+    
+    .video-preview-placeholder i {
+        font-size: 3rem;
+        color: rgba(255, 0, 0, 0.3);
+        margin-bottom: 1rem;
+    }
+    
+    /* Error and success messages */
+    .error-message, .success-message {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.3s ease-out forwards;
+    }
+    
+    .error-message {
+        background-color: #fecaca;
+        color: #b91c1c;
+        border-left: 4px solid #ef4444;
+    }
+    
+    .success-message {
+        background-color: #d1fae5;
+        color: #065f46;
+        border-left: 4px solid #10b981;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+</style>
 </head>
 <body>
     <!-- Feature Page Navbar -->
@@ -36,10 +358,7 @@
                 <a href="youtube-summarizer.html" class="feature-tab active">
                     <i class="fab fa-youtube"></i> YouTube
                 </a>
-                <a href="pdf-qa.html" class="feature-tab">
-                    <i class="fas fa-file-pdf"></i> PDF Q&A
-                </a>
-              
+               
             </div>
             
             <div class="nav-controls">
@@ -88,5 +407,294 @@
 
     <script src="static/js/script.js"></script>
     <script src="static/js/feature-pages.js"></script>
+    <script>
+    // Global variables
+    let isSummarizing = false;
+    
+    // Initialize when document loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add input event listener to extract video ID when URL is pasted
+        document.getElementById('youtubeUrl').addEventListener('input', handleUrlInput);
+    });
+    
+    // Handle URL input to show video preview
+    function handleUrlInput(e) {
+        const url = e.target.value;
+        const videoId = extractVideoId(url);
+        
+        if (videoId) {
+            // Show video preview
+            fetchVideoInfo(videoId);
+        } else {
+            // Hide preview if URL is cleared or invalid
+            if (!url.trim()) {
+                document.getElementById('videoPreview').style.display = 'none';
+            }
+        }
+    }
+    
+    // Extract YouTube video ID from various URL formats
+    function extractVideoId(url) {
+        if (!url) return null;
+        
+        // Match patterns like: 
+        // - https://www.youtube.com/watch?v=VIDEO_ID
+        // - https://youtu.be/VIDEO_ID
+        // - https://youtube.com/shorts/VIDEO_ID
+        const patterns = [
+            /(?:v=|\/)([0-9A-Za-z_-]{11})(?:[\&\?]|$)/,
+            /youtu\.be\/([0-9A-Za-z_-]{11})(?:[\&\?]|$)/,
+            /youtube\.com\/shorts\/([0-9A-Za-z_-]{11})(?:[\&\?]|$)/
+        ];
+        
+        for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) {
+                return match[1];
+            }
+        }
+        
+        return null;
+    }
+    
+    // Fetch video information for preview
+    async function fetchVideoInfo(videoId) {
+        try {
+            document.getElementById('videoPreview').innerHTML = `
+                <div class="loading-spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <p>Loading video info...</p>
+                </div>
+            `;
+            document.getElementById('videoPreview').style.display = 'block';
+            
+            const response = await fetch(`/api/video-info/${videoId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch video info');
+            }
+            
+            const data = await response.json();
+            
+            // Create preview
+            document.getElementById('videoPreview').innerHTML = `
+                <div class="video-preview-content">
+                    <div class="video-thumbnail">
+                        <img src="${data.thumbnail}" alt="${data.title}">
+                        <div class="video-duration">${data.duration || 'N/A'}</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">${data.title}</h3>
+                        <p class="video-channel"><i class="fas fa-user"></i> ${data.channel}</p>
+                        <p class="video-views"><i class="fas fa-eye"></i> ${formatNumber(data.view_count)} views</p>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error fetching video info:', error);
+            document.getElementById('videoPreview').innerHTML = `
+                <div class="video-preview-placeholder">
+                    <i class="fab fa-youtube"></i>
+                    <p>Video preview will appear here</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Format large numbers with commas
+    function formatNumber(num) {
+        return num ? num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0';
+    }
+    
+    // Generate YouTube summary
+    async function generateYouTubeSummary() {
+        const url = document.getElementById('youtubeUrl').value.trim();
+        
+        if (!url) {
+            showError('Please enter a YouTube URL');
+            return;
+        }
+        
+        const videoId = extractVideoId(url);
+        if (!videoId) {
+            showError('Invalid YouTube URL. Please enter a valid YouTube video link');
+            return;
+        }
+        
+        if (isSummarizing) {
+            showError('Already summarizing a video, please wait...');
+            return;
+        }
+        
+        isSummarizing = true;
+        
+        // Update button state
+        const generateBtn = document.querySelector('.generate-btn');
+        const originalBtnText = generateBtn.innerHTML;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Summarizing...';
+        generateBtn.disabled = true;
+        
+        // Show loading in results area
+        const resultsArea = document.getElementById('resultsArea');
+        resultsArea.style.display = 'block';
+        resultsArea.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner">
+                    <i class="fab fa-youtube fa-spin"></i>
+                </div>
+                <h3>Generating Video Summary...</h3>
+                <p>AI is analyzing the video content. This may take a few moments.</p>
+            </div>
+        `;
+        
+        try {
+            // Call the API to generate the summary
+            const response = await fetch('/api/summarize-youtube', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                console.log("Summary generated successfully:", result);
+                displayVideoSummary(result);
+            } else {
+                console.error("Error generating summary:", result);
+                showError(result.detail || 'Failed to generate summary');
+                resultsArea.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Network error occurred. Please try again.');
+            resultsArea.style.display = 'none';
+        } finally {
+            isSummarizing = false;
+            generateBtn.innerHTML = originalBtnText;
+            generateBtn.disabled = false;
+        }
+    }
+    
+    // Display the video summary results
+    function displayVideoSummary(result) {
+        const resultsArea = document.getElementById('resultsArea');
+        
+        // Format summary with paragraphs
+        const formattedSummary = result.summary
+            .split('\n\n')
+            .map(paragraph => `<p>${paragraph}</p>`)
+            .join('');
+        
+        resultsArea.innerHTML = `
+            <div class="summary-container">
+                <div class="summary-header">
+                    <div class="summary-video-preview">
+                        <div class="summary-thumbnail">
+                            <img src="${result.thumbnail}" alt="${result.title}">
+                            <div class="summary-play-btn" onclick="openVideoInNewTab('${result.video_id}')">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <div class="summary-video-details">
+                            <h2 class="summary-title">${result.title}</h2>
+                            <div class="summary-meta">
+                                <span class="source-badge ${result.source === 'transcript' ? 'transcript' : 'audio'}">
+                                    <i class="fas ${result.source === 'transcript' ? 'fa-closed-captioning' : 'fa-microphone'}"></i>
+                                    ${result.source === 'transcript' ? 'Using Transcript' : 'Using Audio Analysis'}
+                                </span>
+                                ${result.duration ? `<span class="duration-badge"><i class="fas fa-clock"></i> ${result.duration}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-actions">
+                        <button class="action-btn copy-btn" onclick="copyToClipboard('${encodeURIComponent(result.summary)}')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="action-btn flashcards-btn" onclick="generateFlashcardsFromSummary('${encodeURIComponent(result.summary)}')">
+                            <i class="fas fa-brain"></i> Generate Flashcards
+                        </button>
+                        <button class="action-btn notes-btn" onclick="generateNotesFromSummary('${encodeURIComponent(result.summary)}')">
+                            <i class="fas fa-sticky-note"></i> Generate Notes
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="summary-content">
+                    <h3><i class="fas fa-lightbulb"></i> Summary</h3>
+                    <div class="summary-text">
+                        ${formattedSummary}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Scroll to results
+        resultsArea.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Open YouTube video in new tab
+    function openVideoInNewTab(videoId) {
+        window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+    }
+    
+    // Copy summary to clipboard
+    function copyToClipboard(encodedText) {
+        const text = decodeURIComponent(encodedText);
+        navigator.clipboard.writeText(text).then(() => {
+            showSuccess('Summary copied to clipboard!');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+            showError('Failed to copy to clipboard');
+        });
+    }
+    
+    // Generate flashcards from summary
+    function generateFlashcardsFromSummary(encodedText) {
+        const text = decodeURIComponent(encodedText);
+        // Redirect to flashcards with the text
+        sessionStorage.setItem('summaryForFlashcards', text);
+        window.location.href = 'flashcards.html?source=youtube';
+    }
+    
+    // Generate notes from summary
+    function generateNotesFromSummary(encodedText) {
+        const text = decodeURIComponent(encodedText);
+        // Redirect to sticky notes with the text
+        sessionStorage.setItem('summaryForNotes', text);
+        window.location.href = 'sticky-notes.html?source=youtube';
+    }
+    
+    // Show error toast
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            ${message}
+        `;
+        document.body.appendChild(errorDiv);
+        
+        setTimeout(() => {
+            errorDiv.remove();
+        }, 5000);
+    }
+    
+    // Show success toast
+    function showSuccess(message) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            ${message}
+        `;
+        document.body.appendChild(successDiv);
+        
+        setTimeout(() => {
+            successDiv.remove();
+        }, 3000);
+    }
+</script>
 </body>
 </html>
