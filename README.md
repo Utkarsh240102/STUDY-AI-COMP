@@ -10,10 +10,6 @@ StudyAI is a comprehensive AI-powered learning platform designed to revolutioniz
 
 ## 🔍 Problem Statement: Open Innovation in Education
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/usernameisalreadytaken4/study_ai_readme_assets/main/problem_statement.jpg" alt="Open Innovation Challenge" width="700"/>
-</div>
-
 The educational technology landscape faces a critical challenge: despite the abundance of digital learning tools, there remains a significant gap in solutions that can transform passive content consumption into active, personalized learning experiences. Existing tools often lack personalization, interactivity, and a unified approach to different content formats. This project addresses the need for open innovation by creating an integrated platform that empowers students to build their own learning pathways from any source material.
 
 ## 💡 Our Solution
