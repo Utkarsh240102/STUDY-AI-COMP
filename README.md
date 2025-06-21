@@ -1,10 +1,8 @@
 # StudyAI - The Ultimate AI-Powered Learning Platform
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/usernameisalreadytaken4/study_ai_readme_assets/main/study_ai_logo.png" alt="StudyAI Logo" width="180"/>
-  <br>
+
   <h3>Transform your study materials into interactive learning experiences</h3>
-</div>
+
 
 ## 📚 Project Overview
 
